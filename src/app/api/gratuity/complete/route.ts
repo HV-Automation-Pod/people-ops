@@ -44,6 +44,23 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Only admins or someone who has actually messaged on this dispatch can
+  // complete it — prevents one HR rep from closing another's workflow.
+  if (!auth.actor.isAdmin) {
+    const { data: ownMessages } = await supabase
+      .from("gratuity_messages")
+      .select("id")
+      .eq("dispatch_id", dispatch_id)
+      .eq("sent_by", auth.actor.userId)
+      .limit(1);
+    if (!ownMessages || ownMessages.length === 0) {
+      return NextResponse.json(
+        { error: "Only the HR rep who sent this dispatch (or an admin) can mark it complete." },
+        { status: 403 }
+      );
+    }
+  }
+
   const { error } = await supabase
     .from("gratuity_dispatches")
     .update({

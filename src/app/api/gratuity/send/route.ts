@@ -220,8 +220,12 @@ export async function POST(request: NextRequest) {
       return data.id as string;
     })());
 
-  // 9. Cache slack_user_id on employees for next time
-  if (!employee.slack_user_id) {
+  // 9. Cache slack_user_id on employees for next time.
+  //    IMPORTANT: only cache when the lookup was for the real employee. In dev,
+  //    targetEmail is redirected to DEV_TEST_USER_EMAIL — caching that ID
+  //    against the real employee row would permanently mis-route any later
+  //    production send (DM goes to the test user instead of the employee).
+  if (!employee.slack_user_id && targetEmail === employee.email) {
     await supabase
       .from("employees")
       .update({ slack_user_id: slackUserId })

@@ -1,5 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase";
+import { requireUser } from "@/lib/api-auth";
+import { withErrorHandler } from "@/lib/api-error";
 
 /**
  * GET /api/dashboard
@@ -8,7 +10,12 @@ import { createServiceClient } from "@/lib/supabase";
  * which is the per-automation workflow table. When more forms are built
  * (I/J/K), they'll share the same status model.
  */
-export async function GET() {
+export const GET = withErrorHandler(async (request: NextRequest) => {
+  const auth = await requireUser(request);
+  if ("error" in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
   const supabase = createServiceClient();
 
   const [employeesRes, dispatchesRes] = await Promise.all([
@@ -25,11 +32,10 @@ export async function GET() {
   const activeEmployees = employees.filter((e) => e.status === "active").length;
 
   const formsPending = dispatches.filter((d) => d.status === "pending").length;
-  const formsSent = formsPending; // in the new model, "sent but not completed" == pending
+  const formsSent = formsPending;
   const formsCompleted = dispatches.filter((d) => d.status === "completed").length;
-  const formsOverdue = 0; // overdue is computed in UI if needed
+  const formsOverdue = 0;
 
-  // Upcoming anniversaries (next 30 days)
   const today = new Date();
   const thirtyDaysLater = new Date(today);
   thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
@@ -43,7 +49,6 @@ export async function GET() {
     return anniversary >= today && anniversary <= thirtyDaysLater;
   }).length;
 
-  // Per-form-type breakdown
   const formBreakdown = (["F", "I", "J", "K"] as const).map((type) => {
     const typed = dispatches.filter((d) => d.form_type === type);
     return {
@@ -67,4 +72,4 @@ export async function GET() {
     },
     formBreakdown,
   });
-}
+});

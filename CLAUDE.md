@@ -33,7 +33,7 @@ src/
 │   ├── layout.tsx                      # Root layout (Geist font)
 │   ├── globals.css                     # Tailwind + custom utilities
 │   ├── login/page.tsx                  # Google OAuth login
-│   ├── auth/callback/route.ts          # OAuth callback
+│   ├── auth/callback/page.tsx          # OAuth callback — client-side PKCE exchange
 │   ├── gratuity/page.tsx               # Gratuity dashboard (real data)
 │   ├── admin/page.tsx                  # Admin panel (users + access requests)
 │   └── api/

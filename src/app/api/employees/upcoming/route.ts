@@ -1,7 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase";
+import { requireUser } from "@/lib/api-auth";
+import { withErrorHandler, dbErrorMessage } from "@/lib/api-error";
 
-export async function GET() {
+export const GET = withErrorHandler(async (request: NextRequest) => {
+  const auth = await requireUser(request);
+  if ("error" in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
   const supabase = createServiceClient();
 
   const { data: employees, error } = await supabase
@@ -11,7 +18,7 @@ export async function GET() {
     .order("date_of_joining", { ascending: true });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: dbErrorMessage(error) }, { status: 500 });
   }
 
   const today = new Date();
@@ -38,4 +45,4 @@ export async function GET() {
     .sort((a, b) => a.daysLeft - b.daysLeft);
 
   return NextResponse.json(upcoming);
-}
+});
