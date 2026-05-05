@@ -1,0 +1,288 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* ================================================================
+     NEUTRAL PALETTE — Warm stone with subtle warmth
+     60% of the UI surface area
+     ================================================================ */
+  --color-stone-25: #FAFAF9;
+  --color-stone-50: #F5F5F3;
+  --color-stone-75: #EFEFED;
+  --color-stone-100: #E7E5E2;
+  --color-stone-150: #D8D6D2;
+  --color-stone-200: #C8C6C2;
+  --color-stone-250: #B8B6B2;
+  --color-stone-300: #A8A6A2;
+  --color-stone-400: #78766F;
+  --color-stone-500: #57554F;
+  --color-stone-600: #3E3D38;
+  --color-stone-700: #2D2C28;
+  --color-stone-750: #252421;
+  --color-stone-800: #1E1D1A;
+  --color-stone-850: #171714;
+  --color-stone-900: #12110F;
+  --color-stone-950: #0A0A08;
+
+  /* ================================================================
+     PRIMARY — Coral (warm, energetic, approachable)
+     Used for CTAs, brand marks, key actions — 10% rule
+     ================================================================ */
+  --color-coral-50: #FFF5F1;
+  --color-coral-100: #FFE4DB;
+  --color-coral-200: #FFC8B5;
+  --color-coral-300: #FFA48A;
+  --color-coral-400: #F28B6A;
+  --color-coral-500: #E86A4A;
+  --color-coral-600: #D45234;
+  --color-coral-700: #B83D1E;
+
+  /* ================================================================
+     ACCENT — Indigo (cool, trustworthy — complementary to coral)
+     Used for secondary highlights, links, info states — 10% rule
+     ================================================================ */
+  --color-indigo-50: #EEF2FF;
+  --color-indigo-100: #E0E7FF;
+  --color-indigo-200: #C7D2FE;
+  --color-indigo-300: #A5B4FC;
+  --color-indigo-400: #818CF8;
+  --color-indigo-500: #6366F1;
+  --color-indigo-600: #4F46E5;
+  --color-indigo-700: #4338CA;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================================================
+   SCROLLBAR
+   ================================================================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D8D6D2; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #A8A6A2; }
+.dark ::-webkit-scrollbar-thumb { background: #2D2C28; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #3E3D38; }
+
+/* ================================================================
+   GLASS EFFECTS — Frosted glass header + panels
+   ================================================================ */
+.glass-header {
+  background: rgba(250, 250, 249, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+.dark .glass-header {
+  background: rgba(10, 10, 8, 0.8);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+}
+.dark .glass-panel {
+  background: rgba(30, 29, 26, 0.6);
+}
+
+/* ================================================================
+   BACKGROUND PATTERNS
+   ================================================================ */
+.bg-dots {
+  background-image: radial-gradient(circle, #E7E5E2 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.dark .bg-dots {
+  background-image: radial-gradient(circle, #2D2C28 1px, transparent 1px);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.dark .bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ================================================================
+   GRADIENT TEXT
+   ================================================================ */
+.brand-gradient {
+  background: linear-gradient(135deg, #F28B6A, #E86A4A, #D45234);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.indigo-gradient {
+  background: linear-gradient(135deg, #818CF8, #6366F1, #4F46E5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ================================================================
+   SHADOWS — Layered for realistic depth
+   ================================================================ */
+.shadow-soft {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 2px 4px rgba(0, 0, 0, 0.02);
+}
+.dark .shadow-soft {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-elevated {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.06);
+}
+.dark .shadow-elevated {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-float {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 24px 48px rgba(0, 0, 0, 0.08);
+}
+.dark .shadow-float {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+.shadow-coral {
+  box-shadow:
+    0 2px 8px rgba(232, 106, 74, 0.15),
+    0 8px 24px rgba(232, 106, 74, 0.1);
+}
+
+.shadow-indigo {
+  box-shadow:
+    0 2px 8px rgba(99, 102, 241, 0.15),
+    0 8px 24px rgba(99, 102, 241, 0.1);
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.25s ease-out; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scale-in 0.2s ease-out; }
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-down { animation: slide-down 0.2s ease-out; }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.1) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ================================================================
+   INTERACTIVE — Hover lift effect for cards
+   ================================================================ */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* ================================================================
+   RING FOCUS STYLES
+   ================================================================ */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(232, 106, 74, 0.4);
+}
+.dark .focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px rgba(232, 106, 74, 0.5);
+}
+
+/* ================================================================
+   SELECTION
+   ================================================================ */
+::selection { background: #E86A4A; color: white; }
+
+/* ================================================================
+   SMOOTH PAGE TRANSITIONS
+   ================================================================ */
+.page-enter {
+  animation: fade-up 0.3s ease-out;
+}
+
+/* ================================================================
+   TABLE STYLES
+   ================================================================ */
+.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+.table-row-hover:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+.dark .table-row-hover:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* ================================================================
+   DIVIDER WITH GRADIENT FADE
+   ================================================================ */
+.divider-fade {
+  background: linear-gradient(90deg, transparent, #E7E5E2, transparent);
+  height: 1px;
+}
+.dark .divider-fade {
+  background: linear-gradient(90deg, transparent, #2D2C28, transparent);
+}
