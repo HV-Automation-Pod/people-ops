@@ -243,6 +243,20 @@ export default function GratuityDashboard() {
     return true;
   };
 
+  const deleteMessage = async (
+    messageId: string
+  ): Promise<{ ok: true } | { ok: false; error: string }> => {
+    const res = await authFetch(`/api/gratuity/messages/${messageId}`, {
+      method: "DELETE",
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return { ok: false, error: body.error ?? `Delete failed (${res.status})` };
+    }
+    await refreshAfterSend();
+    return { ok: true };
+  };
+
   const profileMissing =
     !profile?.slack_bot_token_preview ||
     !profile?.slack_user_token_preview ||
@@ -510,6 +524,8 @@ export default function GratuityDashboard() {
         }}
         onMarkComplete={markComplete}
         onDelete={deleteDispatch}
+        onDeleteMessage={deleteMessage}
+        currentUserId={user?.id ?? null}
       />
     </div>
   );

@@ -409,17 +409,28 @@ export function EmployeeTable({
                 const isCompleted = emp.dispatch_status === "completed";
                 const isPending = emp.dispatch_status === "pending";
                 const isChecked = selected.has(emp.id);
+                const handleRowClick = () => {
+                  if ((isCompleted || isPending) && emp.dispatch_id) {
+                    onOpenDispatch(emp.dispatch_id);
+                  } else if (!isCompleted && !isPending) {
+                    onSend(emp);
+                  }
+                };
                 return (
                   <tr
                     key={emp.id}
+                    onClick={handleRowClick}
                     className={clsx(
-                      "border-b border-stone-75 transition-colors last:border-0 dark:border-stone-800/50",
+                      "cursor-pointer border-b border-stone-75 transition-colors last:border-0 dark:border-stone-800/50",
                       isChecked
                         ? "bg-coral-50/40 dark:bg-coral-700/10"
                         : "hover:bg-stone-25/60 dark:hover:bg-stone-900/40"
                     )}
                   >
-                    <td className="px-4 py-3">
+                    <td
+                      className="px-4 py-3"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Checkbox
                         checked={isChecked}
                         onChange={() => toggleRow(emp.id)}
@@ -482,7 +493,10 @@ export function EmployeeTable({
                         <Badge variant="muted">Not sent</Badge>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td
+                      className="px-4 py-3 text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {isCompleted || isPending ? (
                         <Button
                           size="xs"

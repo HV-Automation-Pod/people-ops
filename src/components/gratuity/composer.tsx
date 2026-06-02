@@ -6,7 +6,6 @@ import {
   Paperclip,
   X,
   AlertTriangle,
-  CheckCircle2,
   FileText,
   Eye,
   Loader2,
@@ -285,19 +284,6 @@ export function Composer({
         </div>
       )}
 
-      {/* Placeholders help */}
-      <p className="mt-4 text-[10px] text-stone-400 dark:text-stone-500">
-        <CheckCircle2 className="mr-0.5 inline h-3 w-3" />
-        Placeholders auto-filled:{" "}
-        <code className="rounded bg-stone-100 px-1 py-0.5 font-mono dark:bg-stone-800">
-          {"{{first_name}}"}
-        </code>{" "}
-        ·{" "}
-        <code className="rounded bg-stone-100 px-1 py-0.5 font-mono dark:bg-stone-800">
-          {"{{service_years}}"}
-        </code>{" "}
-        · and more
-      </p>
     </SlideOver>
   );
 }

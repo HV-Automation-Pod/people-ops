@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, ArrowLeft, Search } from "lucide-react";
+import { Building2, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
@@ -37,11 +37,6 @@ export default function NotFound() {
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
-        </div>
-
-        {/* Decorative search icon */}
-        <div className="mt-16 flex h-16 w-16 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800">
-          <Search className="h-7 w-7 text-stone-300 dark:text-stone-600" />
         </div>
       </div>
     </div>

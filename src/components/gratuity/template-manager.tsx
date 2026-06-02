@@ -18,6 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { SlideOver } from "@/components/ui/slide-over";
 import type { GratuityTemplate, TemplateAttachment } from "@/lib/types";
+import {
+  TemplateTextarea,
+  PlaceholderHint,
+} from "@/components/gratuity/template-textarea";
+import { PLACEHOLDER_TOKENS } from "@/lib/gratuity-templates";
 
 const TEMPLATE_META: Record<
   string,
@@ -44,14 +49,6 @@ const TEMPLATE_META: Record<
     icon: AlertTriangle,
   },
 };
-
-const PLACEHOLDERS = [
-  "{{first_name}}",
-  "{{last_name}}",
-  "{{emp_id}}",
-  "{{joining_date}}",
-  "{{service_years}}",
-];
 
 export function TemplateManager({
   open,
@@ -102,16 +99,18 @@ export function TemplateManager({
               Placeholders
             </p>
             <p>
-              {PLACEHOLDERS.map((p, i) => (
+              {PLACEHOLDER_TOKENS.map((p, i) => (
                 <span key={p}>
                   <code className="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-[10px] dark:bg-stone-800">
                     {p}
                   </code>
-                  {i < PLACEHOLDERS.length - 1 && " · "}
+                  {i < PLACEHOLDER_TOKENS.length - 1 && " · "}
                 </span>
               ))}
-              {" "}are filled in automatically from the target employee. HR can
-              still edit the final text in the composer before sending.
+              {" "}are filled in automatically from the target employee. Type{" "}
+              <code className="rounded bg-stone-100 px-1 font-mono dark:bg-stone-800">{"{{"}</code>{" "}
+              in the editor to autocomplete. HR can still edit the final text
+              in the composer before sending.
             </p>
           </div>
         </div>
@@ -265,13 +264,14 @@ function TemplateRow({
 
       {editing ? (
         <div className="mt-4 space-y-3">
-          <textarea
+          <TemplateTextarea
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={setDraft}
             rows={8}
             placeholder="Hi {{first_name}}, ..."
             className="w-full resize-y rounded-xl border border-stone-150 bg-white px-3.5 py-2.5 font-mono text-xs leading-relaxed text-stone-700 shadow-soft transition-colors focus:border-stone-250 focus:outline-none dark:border-stone-700 dark:bg-stone-850 dark:text-stone-200 dark:focus:border-stone-600"
           />
+          <PlaceholderHint />
           <div className="flex items-center justify-end gap-2">
             <Button
               variant="ghost"

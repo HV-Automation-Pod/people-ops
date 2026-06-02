@@ -10,6 +10,7 @@ import {
   Trash2,
   MessageSquare,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -50,17 +51,23 @@ export function DispatchDetail({
   onClose,
   dispatch,
   isAdmin,
+  currentUserId,
   onSendReminder,
   onMarkComplete,
   onDelete,
+  onDeleteMessage,
 }: {
   open: boolean;
   onClose: () => void;
   dispatch: GratuityDispatch | null;
   isAdmin: boolean;
+  currentUserId: string | null;
   onSendReminder: (type: GratuityTemplateKey) => void;
   onMarkComplete: (note: string) => Promise<boolean>;
   onDelete: () => Promise<boolean>;
+  onDeleteMessage: (
+    messageId: string
+  ) => Promise<{ ok: true } | { ok: false; error: string }>;
 }) {
   const [showMarkComplete, setShowMarkComplete] = useState(false);
   const [note, setNote] = useState("");
@@ -68,6 +75,8 @@ export function DispatchDetail({
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
+  const [confirmDeleteMessageId, setConfirmDeleteMessageId] = useState<string | null>(null);
 
   if (!dispatch) return <SlideOver open={open} onClose={onClose} title="" children={null} />;
 
@@ -105,6 +114,19 @@ export function DispatchDetail({
       setConfirmDelete(false);
     } else {
       setError("Failed to delete dispatch");
+    }
+  };
+
+  const handleDeleteMessage = async () => {
+    if (!confirmDeleteMessageId) return;
+    setDeletingMessageId(confirmDeleteMessageId);
+    setError(null);
+    const result = await onDeleteMessage(confirmDeleteMessageId);
+    setDeletingMessageId(null);
+    if (result.ok) {
+      setConfirmDeleteMessageId(null);
+    } else {
+      setError(result.error);
     }
   };
 
@@ -278,12 +300,15 @@ export function DispatchDetail({
           {messages.map((m) => {
             const meta = MESSAGE_META[m.message_type];
             const MI = meta.icon;
+            const canDelete =
+              !!currentUserId && m.sent_by === currentUserId && !!m.slack_ts;
+            const isDeletingThis = deletingMessageId === m.id;
             return (
               <div
                 key={m.id}
                 className="rounded-xl border border-stone-100 bg-white p-4 dark:border-stone-800 dark:bg-stone-850"
               >
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <MI className={`h-3.5 w-3.5 ${meta.tone}`} />
                     <span className="text-[11px] font-bold text-stone-700 dark:text-stone-200">
@@ -295,9 +320,25 @@ export function DispatchDetail({
                       </Badge>
                     )}
                   </div>
-                  <span className="text-[10px] font-medium text-stone-400">
-                    {fmtTime(m.sent_at)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-medium text-stone-400">
+                      {fmtTime(m.sent_at)}
+                    </span>
+                    {canDelete && (
+                      <button
+                        onClick={() => setConfirmDeleteMessageId(m.id)}
+                        disabled={isDeletingThis}
+                        title="Delete this message from Slack and our records"
+                        className="cursor-pointer rounded p-1 text-stone-300 transition-colors hover:bg-rose-50 hover:text-rose-500 disabled:opacity-50 dark:text-stone-600 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
+                      >
+                        {isDeletingThis ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-3 w-3" />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
                 <p className="mb-2 text-[10px] text-stone-400">
                   by {m.sender?.name ?? "Unknown"}
@@ -356,6 +397,22 @@ export function DispatchDetail({
         }
         destructiveNote="This cannot be undone."
         confirmLabel="Delete dispatch"
+        variant="danger"
+      />
+
+      <ConfirmDialog
+        open={!!confirmDeleteMessageId}
+        onClose={() => setConfirmDeleteMessageId(null)}
+        onConfirm={handleDeleteMessage}
+        title="Delete this message?"
+        description={
+          <>
+            This will delete the message from Slack and remove it from our
+            records. The recipient will no longer see it in their DM history.
+          </>
+        }
+        destructiveNote="This cannot be undone."
+        confirmLabel="Delete message"
         variant="danger"
       />
     </SlideOver>

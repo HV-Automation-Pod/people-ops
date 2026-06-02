@@ -103,6 +103,34 @@ export async function slackUploadFile(
   };
 }
 
+/**
+ * Delete a previously posted message via `chat.delete`. Slack only allows
+ * deletion using the same User token (xoxp-) that posted the message.
+ * Returns true on success, "already_gone" if the message no longer exists
+ * (treated as success). Throws for other errors.
+ */
+export async function slackDeleteMessage(
+  userToken: string,
+  channelId: string,
+  ts: string
+): Promise<true | "already_gone"> {
+  const client = new WebClient(userToken);
+  try {
+    const res = await client.chat.delete({ channel: channelId, ts });
+    if (!res.ok) {
+      throw new Error(`Slack chat.delete failed: ${res.error ?? "unknown error"}`);
+    }
+    return true;
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    // If the message is already gone, treat as success — nothing to clean up on Slack.
+    if (/message_not_found|already_in_thread|cant_delete_message/i.test(msg)) {
+      if (/message_not_found/i.test(msg)) return "already_gone";
+    }
+    throw e;
+  }
+}
+
 /** Post a chat message to a DM channel. Returns the message timestamp (ts). */
 export async function slackPostMessage(
   userToken: string,
@@ -135,6 +163,8 @@ export function humanizeSlackError(raw: string): string {
     rate_limited: "Slack rate limit hit. Try again in a minute.",
     missing_scope: "Your Slack token is missing a required permission scope.",
     channel_not_found: "Slack could not find or open a DM with this user.",
+    cant_delete_message: "You can only delete messages you sent yourself.",
+    message_not_found: "That message no longer exists in Slack.",
   };
   return map[raw] ?? `Slack error: ${raw}`;
 }
